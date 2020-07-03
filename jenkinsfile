@@ -1,14 +1,11 @@
 pipeline {
 
     agent any
-
+  
     stages {
-
         stage ('Build') {
             steps {
-                withMaven(maven: 'maven_3_6_3') {
                     bat 'mvn clean package'
-                }
             }
         }
 
@@ -19,8 +16,11 @@ pipeline {
                                   credentialsId   : 'PCF_LOGIN',
                                   usernameVariable: 'USERNAME',
                                   passwordVariable: 'PASSWORD']]) {
-
-                    bat 'cf login -a http://api.run.pivotal.io -u $USERNAME -p $PASSWORD'
+                                  
+					echo "USERNAME =${USERNAME}"
+					echo "PASSWORD =${PASSWORD}"
+					bat 'cf login -a http://api.run.pivotal.io -u %USERNAME% -p %PASSWORD%'
+                    bat 'cf target -s development'
                     bat 'cf push'
                 }
             }
